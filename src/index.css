@@ -1,0 +1,145 @@
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Outfit:wght@200;300;400;500&display=swap');
+
+@import "tailwindcss";
+
+/* 1. DEFINE VARIABLES (The Source of Truth) */
+@theme {
+  /* --- PALETTE: MIDNIGHT ATELIER --- */
+  --color-obsidian: #0F0F0F;   /* Deep Warm Charcoal (Premium Background) */
+  --color-charcoal: #1A1A1A;   /* Secondary Surface */
+  --color-vapor: #2A2A2A;      /* Borders / Lines */
+  
+  --color-bone: #E0E0E0;       /* Primary Text (Muted Silver) */
+  --color-ash: #888888;        /* Secondary Text (Darker Grey) */
+  
+  --color-gold: #D4AF37;       /* Classic Metallic Gold */
+  --color-bronze: #BFAFB2;     /* Antique Brass (Accent) */
+  --color-error: #9E2B25;      /* Deep Red */
+
+  /* --- TYPOGRAPHY --- */
+  --font-serif: "Cormorant Garamond", serif;
+  --font-sans: "Outfit", sans-serif;
+
+  /* --- ANIMATIONS --- */
+  --animate-fade-up: fade-up 1.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  --animate-scale-slow: scale-slow 1.5s ease-out forwards;
+  --animate-burst: burst 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+  --animate-shake: shake 0.3s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
+  --animate-slide-num: slideUpFade 0.3s ease-out forwards;
+
+  --keyframes fade-up {
+    from { opacity: 0; transform: translateY(40px); filter: blur(4px); }
+    to { opacity: 1; transform: translateY(0); filter: blur(0); }
+  }
+  
+  --keyframes scale-slow {
+    from { transform: scale(1); }
+    to { transform: scale(1.05); }
+  }
+
+  --keyframes burst {
+    0% { box-shadow: 0 0 0 0px rgba(191, 175, 178, 0.7); }
+    100% { box-shadow: 0 0 0 20px rgba(191, 175, 178, 0); }
+  }
+
+  --keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-4px); }
+    75% { transform: translateX(4px); }
+  }
+
+  --keyframes slideUpFade {
+    0% { transform: translateY(10px); opacity: 0; }
+    100% { transform: translateY(0); opacity: 1; }
+  }
+}
+
+/* 2. BASE STYLES */
+body {
+  background-color: var(--color-obsidian);
+  color: var(--color-bone);
+  font-family: var(--font-sans);
+  font-weight: 300;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+
+/* 3. CURSOR LOGIC (SAFE MODE) */
+
+/* Only hide cursor on Desktop */
+@media (hover: hover) and (pointer: fine) {
+  body {
+    cursor: none; 
+  }
+  
+  /* Force hide on interactive elements */
+  a, button, input, textarea, select, [role="button"], .cursor-pointer {
+    cursor: none !important;
+  }
+}
+
+/* On Mobile, use system cursor */
+@media (hover: none) and (pointer: coarse) {
+  body {
+    cursor: auto !important;
+  }
+  a, button, input {
+    cursor: pointer !important;
+  }
+}
+
+/* 4. UTILITIES */
+
+/* Headings */
+h1, h2, h3, h4 {
+  font-family: var(--font-serif);
+  font-weight: 300;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+}
+
+/* Button Physics */
+button:active, a:active {
+  transform: scale(0.95);
+  transition: transform 0.1s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+/* Button Visibility for Inversion Cursor */
+button, .btn {
+  color: #fff; /* Ensure text is white so cursor can invert it to black */
+}
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: var(--color-obsidian); }
+::-webkit-scrollbar-thumb { background: var(--color-vapor); border-radius: 99px; }
+
+/* Selection */
+::selection {
+  background: var(--color-bronze);
+  color: var(--color-obsidian);
+}
+
+/* Underline Animation */
+.hover-underline-animation {
+  display: inline-block;
+  position: relative;
+}
+
+.hover-underline-animation::after {
+  content: '';
+  position: absolute;
+  width: 100%;
+  transform: scaleX(0);
+  height: 1px;
+  bottom: -2px;
+  left: 0;
+  background-color: var(--color-bronze);
+  transform-origin: bottom right;
+  transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+.hover-underline-animation:hover::after {
+  transform: scaleX(1);
+  transform-origin: bottom left;
+}
