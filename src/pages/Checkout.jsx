@@ -13,6 +13,7 @@ const Checkout = () => {
 
   // 1. SECURITY: Read from Environment Variable
   const SCRIPT_URL = import.meta.env.VITE_GOOGLE_SCRIPT_URL;
+  console.log("Target Script URL:", SCRIPT_URL); // Debugging Log
 
   const [formData, setFormData] = useState({
     name: '',

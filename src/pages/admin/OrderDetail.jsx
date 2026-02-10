@@ -1,14 +1,14 @@
 import React, { useState } from 'react';
-import { X, Check, MessageSquare, Phone, Mail, Clock } from 'lucide-react';
+import { X, Check, MessageSquare, Phone, Mail, Clock, Truck, Package, Loader2 } from 'lucide-react';
 
 const OrderDetail = ({ order, onClose, onUpdate }) => {
-  const [updating, setUpdating] = useState(false);
+  const [updatingStatus, setUpdatingStatus] = useState(null);
 
   const handleStatusChange = async (newStatus) => {
     const token = sessionStorage.getItem('howlite_admin_token');
     const SCRIPT_URL = import.meta.env.VITE_GOOGLE_SCRIPT_URL;
 
-    setUpdating(true);
+    setUpdatingStatus(newStatus);
     try {
       await fetch(SCRIPT_URL, {
         method: "POST",
@@ -26,7 +26,7 @@ const OrderDetail = ({ order, onClose, onUpdate }) => {
     } catch (error) {
       console.error("Failed to update", error);
     } finally {
-      setUpdating(false);
+      setUpdatingStatus(null);
     }
   };
 
@@ -51,18 +51,46 @@ const OrderDetail = ({ order, onClose, onUpdate }) => {
         {/* Actions / Status */}
         <div className="space-y-4">
           <span className="text-[10px] uppercase tracking-widest text-bronze">Workflow</span>
-          <div className="grid grid-cols-3 gap-3">
-            {['New', 'Contacted', 'Closed'].map((status) => (
+          <div className="grid grid-cols-1 gap-3">
+            {[
+              { id: 'New', icon: Clock, label: 'New Order', desc: 'Awaiting review', color: 'text-blue-400 border-blue-400/20 bg-blue-400/10' },
+              { id: 'Accepted', icon: Check, label: 'Accept Order', desc: 'Sends confirmation email', color: 'text-emerald-400 border-emerald-400/20 bg-emerald-400/10' },
+              { id: 'Out for Delivery', icon: Truck, label: 'Ship Order', desc: 'Notify client of dispatch', color: 'text-amber-400 border-amber-400/20 bg-amber-400/10' },
+              { id: 'Delivered', icon: Package, label: 'Mark Delivered', desc: 'Request review & close', color: 'text-purple-400 border-purple-400/20 bg-purple-400/10' },
+              { id: 'Cancelled', icon: X, label: 'Cancel Order', desc: 'No notification sent', color: 'text-red-400 border-red-400/20 bg-red-400/10' },
+            ].map((status) => (
               <button
-                key={status}
-                onClick={() => handleStatusChange(status)}
-                disabled={updating || order.status === status}
-                className={`py-3 text-[10px] uppercase tracking-widest border rounded transition-all
-                   ${order.status === status
-                    ? 'bg-bronze border-bronze text-white'
-                    : 'border-white/10 text-ash hover:border-white/30'}`}
+                key={status.id}
+                onClick={() => handleStatusChange(status.id)}
+                disabled={updatingStatus !== null || order.status === status.id}
+                className={`flex items-center gap-4 p-4 rounded-lg border transition-all text-left group relative overflow-hidden
+                   ${order.status === status.id
+                    ? 'bg-bronze border-bronze text-obsidian'
+                    : `hover:bg-white/5 ${status.color ? status.color.replace('text-', 'text-ash hover:text-') : 'border-white/10 text-ash'}`}
+                   ${order.status !== status.id && 'border-white/5'}
+                   ${updatingStatus === status.id ? 'animate-pulse bg-white/5 border-white/20' : ''}
+                `}
               >
-                {status}
+                <div className={`p-2 rounded-md transition-colors ${order.status === status.id ? 'bg-black/10' : 'bg-white/5'}`}>
+                  {updatingStatus === status.id ? (
+                    <Loader2 size={18} className="animate-spin text-bronze" />
+                  ) : (
+                    <status.icon size={18} />
+                  )}
+                </div>
+                <div>
+                  <div className="font-serif italic text-lg leading-none mb-1">
+                    {updatingStatus === status.id ? 'Processing...' : status.label}
+                  </div>
+                  <div className={`text-[10px] uppercase tracking-widest ${order.status === status.id ? 'text-obsidian/70' : 'text-ash/60'}`}>
+                    {updatingStatus === status.id ? 'Sending notification...' : status.desc}
+                  </div>
+                </div>
+                {order.status === status.id && (
+                  <div className="ml-auto">
+                    <Check size={16} />
+                  </div>
+                )}
               </button>
             ))}
           </div>

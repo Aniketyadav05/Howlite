@@ -40,10 +40,15 @@ const Footer = () => {
             <div className="space-y-6">
               <h4 className="text-[10px] uppercase tracking-[0.25em] text-bronze">Explore</h4>
               <ul className="space-y-4">
-                {['Collections', 'New Arrivals', 'Bespolke', 'Gifts'].map((item) => (
-                  <li key={item}>
-                    <Link to="/collections" className="text-sm text-ash hover:text-white transition-colors hover-underline-animation">
-                      {item}
+                {[
+                  { name: 'Collections', path: '/collections' },
+                  { name: 'New Arrivals', path: '/collections?sort=new' },
+                  { name: 'Bespoke', path: '/bespoke' },
+                  { name: 'Gifts', path: '/gifts' },
+                ].map((item) => (
+                  <li key={item.name}>
+                    <Link to={item.path} className="text-sm text-ash hover:text-white transition-colors hover-underline-animation">
+                      {item.name}
                     </Link>
                   </li>
                 ))}
@@ -53,10 +58,13 @@ const Footer = () => {
             <div className="space-y-6">
               <h4 className="text-[10px] uppercase tracking-[0.25em] text-bronze">Support</h4>
               <ul className="space-y-4">
-                {['contact', 'SizeGuide'].map((item) => (
-                  <li key={item}>
-                    <Link to={item === 'SizeGuide' ? '/size-guide' : `/contact`} className="text-sm text-ash hover:text-white transition-colors hover-underline-animation">
-                      {item}
+                {[
+                  { name: 'Contact', path: '/contact' },
+                  { name: 'Size Guide', path: '/size-guide' },
+                ].map((item) => (
+                  <li key={item.name}>
+                    <Link to={item.path} className="text-sm text-ash hover:text-white transition-colors hover-underline-animation">
+                      {item.name}
                     </Link>
                   </li>
                 ))}
@@ -87,8 +95,8 @@ const Footer = () => {
         <div className="flex flex-col md:flex-row justify-between items-center mt-12 text-[10px] text-white/20 uppercase tracking-widest gap-4">
           <span>© 2024 Howlite Jewellery. All Rights Reserved.</span>
           <div className="flex gap-8">
-            <a href="#" className="hover:text-white transition-colors">Privacy Policy</a>
-            <a href="#" className="hover:text-white transition-colors">Terms of Use</a>
+            <Link to="/privacy" className="hover:text-white transition-colors">Privacy Policy</Link>
+            <Link to="/terms-of-use" className="hover:text-white transition-colors">Terms of Use</Link>
           </div>
         </div>
 
