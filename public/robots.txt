@@ -1,0 +1,7 @@
+User-agent: *
+Allow: /
+Disallow: /checkout
+Disallow: /cart
+User-agent: *
+Disallow: /howlite/admin
+Sitemap: https://howlite-jewellery.com/sitemap.xml

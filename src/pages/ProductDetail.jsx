@@ -3,14 +3,15 @@ import { useParams, Link } from 'react-router-dom';
 import { Minus, Plus, ArrowLeft, Star, Truck, ShieldCheck } from 'lucide-react';
 import { useCart } from '../context/CartContext';
 import { products } from '../data/products';
-
+import SEO from '../components/SEO';
+import Button from '../components/Button';
 const ProductDetail = () => {
   const { id } = useParams();
   const product = products.find((p) => p.id === parseInt(id));
   const { addToCart } = useCart();
-  
+
   const [quantity, setQuantity] = useState(1);
-  const [activeTab, setActiveTab] = useState('details'); 
+  const [activeTab, setActiveTab] = useState('details');
   const [isLoaded, setIsLoaded] = useState(false);
 
   useEffect(() => {
@@ -22,35 +23,48 @@ const ProductDetail = () => {
 
   return (
     <div className={`min-h-screen bg-obsidian transition-opacity duration-700 ${isLoaded ? 'opacity-100' : 'opacity-0'}`}>
-      
+      <SEO
+        title={product.name}
+        description={product.description}
+        image={product.image}
+        url={`/product/${product.id}`}
+        type="product"
+        product={product} // Triggers JSON-LD generation
+      />
       {/* Navbar Buffer */}
       <div className="pt-24 md:pt-32 pb-12">
         <div className="container mx-auto px-6">
-          
-          <Link to="/collections" className="inline-flex items-center gap-2 text-[10px] uppercase tracking-[0.25em] text-ash hover:text-bone mb-6 transition-colors">
-            <ArrowLeft size={14} /> Back
-          </Link>
+
+          <Button
+            to="/collections"
+            variant="ghost"
+            size="sm"
+            icon={ArrowLeft}
+            className="mb-6 px-0 hover:bg-transparent"
+          >
+            Back
+          </Button>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-16 items-start">
-            
+
             {/* --- LEFT: Image Gallery --- */}
             {/* Mobile: Height restricted to 45vh so content appears below. Desktop: Sticky. */}
             <div className="relative h-[45vh] md:h-auto md:sticky md:top-32 aspect-[3/4] md:aspect-[4/5] bg-[#151515] rounded-lg overflow-hidden border border-white/5">
-               <img 
-                 src={product.image} 
-                 alt={product.name} 
-                 className="w-full h-full object-cover reveal-img"
-               />
-               <div className="absolute bottom-4 left-4 bg-obsidian/60 backdrop-blur-md px-3 py-1 rounded-full border border-white/10">
-                 <span className="text-[10px] uppercase tracking-widest text-white flex items-center gap-1">
-                   <Star size={10} className="fill-bronze text-bronze"/> 4.9 (128 Reviews)
-                 </span>
-               </div>
+              <img
+                src={product.image}
+                alt={product.name}
+                className="w-full h-full object-cover reveal-img"
+              />
+              <div className="absolute bottom-4 left-4 bg-obsidian/60 backdrop-blur-md px-3 py-1 rounded-full border border-white/10">
+                <span className="text-[10px] uppercase tracking-widest text-white flex items-center gap-1">
+                  <Star size={10} className="fill-bronze text-bronze" /> 4.9 (128 Reviews)
+                </span>
+              </div>
             </div>
 
             {/* --- RIGHT: Buy Box (Compact) --- */}
             <div className="flex flex-col space-y-6 md:pr-12">
-              
+
               {/* Header */}
               <div className="space-y-2">
                 <span className="text-bronze text-[10px] uppercase tracking-[0.3em] font-medium">{product.category}</span>
@@ -65,7 +79,7 @@ const ProductDetail = () => {
 
               {/* CONTROLS (The Amazon Box) */}
               <div className="bg-[#151515] border border-white/5 p-6 rounded-xl space-y-6 shadow-2xl">
-                
+
                 {/* Quantity */}
                 <div className="flex items-center justify-between">
                   <span className="text-xs uppercase tracking-widest text-ash">Quantity</span>
@@ -77,21 +91,23 @@ const ProductDetail = () => {
                 </div>
 
                 {/* Primary Action */}
-                <button 
+                {/* Primary Action */}
+                <Button
                   onClick={() => addToCart({ ...product, quantity })}
-                  className="w-full py-4 bg-bone text-obsidian text-xs uppercase tracking-[0.25em] font-medium rounded-full hover:bg-bronze hover:text-white transition-all duration-300 shadow-lg"
+                  variant="primary"
+                  className="w-full text-black"
                 >
                   Add to Cart
-                </button>
+                </Button>
 
                 {/* Trust Signals */}
                 <div className="grid grid-cols-2 gap-4 pt-2">
-                   <div className="flex items-center gap-2 text-ash/60">
-                     <Truck size={14} /> <span className="text-[10px] uppercase tracking-widest">Free Shipping</span>
-                   </div>
-                   <div className="flex items-center gap-2 text-ash/60">
-                     <ShieldCheck size={14} /> <span className="text-[10px] uppercase tracking-widest">Lifetime Warranty</span>
-                   </div>
+                  <div className="flex items-center gap-2 text-ash/60">
+                    <Truck size={14} /> <span className="text-[10px] uppercase tracking-widest">Free Shipping</span>
+                  </div>
+                  <div className="flex items-center gap-2 text-ash/60">
+                    <ShieldCheck size={14} /> <span className="text-[10px] uppercase tracking-widest">Lifetime Warranty</span>
+                  </div>
                 </div>
               </div>
 
@@ -102,15 +118,15 @@ const ProductDetail = () => {
                   <Plus size={14} className={`transition-transform ${activeTab === 'details' ? 'rotate-45' : ''}`} />
                 </button>
                 <div className={`overflow-hidden transition-all duration-300 ${activeTab === 'details' ? 'max-h-24 opacity-100' : 'max-h-0 opacity-0'}`}>
-                   <p className="text-sm text-ash pt-2 pb-4">100% Recycled 18k Gold. Ethically sourced Obsidian from volcanic regions.</p>
+                  <p className="text-sm text-ash pt-2 pb-4">100% Recycled 18k Gold. Ethically sourced Obsidian from volcanic regions.</p>
                 </div>
-                
+
                 <button onClick={() => setActiveTab(activeTab === 'care' ? '' : 'care')} className="w-full flex justify-between items-center py-3 border-b border-white/10 text-xs uppercase tracking-widest text-ash hover:text-bone">
                   <span>Care Instructions</span>
                   <Plus size={14} className={`transition-transform ${activeTab === 'care' ? 'rotate-45' : ''}`} />
                 </button>
-                 <div className={`overflow-hidden transition-all duration-300 ${activeTab === 'care' ? 'max-h-24 opacity-100' : 'max-h-0 opacity-0'}`}>
-                   <p className="text-sm text-ash pt-2 pb-4">Store in provided velvet pouch. Avoid perfumes and chlorine.</p>
+                <div className={`overflow-hidden transition-all duration-300 ${activeTab === 'care' ? 'max-h-24 opacity-100' : 'max-h-0 opacity-0'}`}>
+                  <p className="text-sm text-ash pt-2 pb-4">Store in provided velvet pouch. Avoid perfumes and chlorine.</p>
                 </div>
               </div>
 

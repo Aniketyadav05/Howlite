@@ -3,21 +3,22 @@ import React, { useEffect, useRef, useState } from "react";
 const CustomCursor = () => {
   const cursorRef = useRef(null);
   const dotRef = useRef(null);
-  
+
   const mouse = useRef({ x: -100, y: -100 });
   const pos = useRef({ x: -100, y: -100 });
-  
+
   const [mode, setMode] = useState("default");
   const [isVisible, setIsVisible] = useState(false); // New state to control rendering
 
   useEffect(() => {
-    // 1. MOBILE CHECK: Only run if device has a fine pointer (mouse)
-    const isDesktop = window.matchMedia("(pointer: fine)").matches;
-    if (!isDesktop) return;
-
-    setIsVisible(true);
+    // 1. MOBILE CHECK: Only hide if strictly touch-only (but render structure)
+    // We'll rely on css 'isMobile' class or similar if needed, but for now
+    // let's just allow it to mount and show on first movement.
 
     const onMouseMove = (e) => {
+      // Show cursor on first move
+      if (!isVisible) setIsVisible(true);
+
       mouse.current.x = e.clientX;
       mouse.current.y = e.clientY;
     };
@@ -25,22 +26,22 @@ const CustomCursor = () => {
     const onMouseOver = (e) => {
       const t = e.target;
       const tag = t.tagName.toLowerCase();
-      
+
       if (tag === 'img' || t.classList.contains('reveal-img')) {
         setMode('image');
       }
       else if (
-        tag === 'button' || 
-        tag === 'a' || 
-        t.closest('button') || 
+        tag === 'button' ||
+        tag === 'a' ||
+        t.closest('button') ||
         t.closest('a') ||
         t.classList.contains('cursor-pointer')
       ) {
         setMode('button');
-      } 
+      }
       else if (['p', 'h1', 'h2', 'span', 'input'].includes(tag)) {
         setMode('text');
-      } 
+      }
       else {
         setMode('default');
       }
@@ -54,7 +55,7 @@ const CustomCursor = () => {
       const ease = 0.15;
       const dx = mouse.current.x - pos.current.x;
       const dy = mouse.current.y - pos.current.y;
-      
+
       pos.current.x += dx * ease;
       pos.current.y += dy * ease;
 
@@ -82,35 +83,35 @@ const CustomCursor = () => {
   // --- DYNAMIC STYLES ---
   const getCursorStyles = () => {
     const base = "fixed top-0 left-0 z-[9999] pointer-events-none rounded-full transition-all duration-300 ease-out flex items-center justify-center";
-    
+
     if (mode === 'image') {
-      return `${base} w-32 h-32 border border-white/50 bg-white/10 backdrop-brightness-150 backdrop-saturate-150 shadow-[0_0_30px_rgba(255,255,255,0.3)] mix-blend-normal`;
+      return `${base} w-32 h-32 border border-white/50 bg-white/10 backdrop-brightness-150 backdrop-saturate-150 shadow-[0_0_30px_rgba(255,255,255,0.3)]`;
     }
     if (mode === 'button') {
-      return `${base} w-20 h-20 bg-white mix-blend-difference opacity-100`;
+      return `${base} w-20 h-20 bg-white/10 border border-white/20`;
     }
     if (mode === 'text') {
-      return `${base} w-16 h-16 bg-white mix-blend-difference opacity-100`;
+      return `${base} w-16 h-16 bg-white/10 border border-white/20`;
     }
-    return `${base} w-6 h-6 border border-white/50 mix-blend-difference opacity-50`;
+    return `${base} w-6 h-6 border border-bronze bg-bronze/20 shadow-[0_0_10px_rgba(168,139,96,0.5)]`;
   };
 
   return (
     <>
-      <div 
-        ref={dotRef} 
-        className="fixed top-0 left-0 z-[9999] pointer-events-none mix-blend-difference"
-        style={{ left: '-3px', top: '-3px' }} 
+      <div
+        ref={dotRef}
+        className="fixed top-0 left-0 z-[9999] pointer-events-none"
+        style={{ left: '-3px', top: '-3px' }}
       >
-        <div className="w-1.5 h-1.5 bg-white rounded-full" />
+        <div className="w-1.5 h-1.5 bg-bronze rounded-full shadow-[0_0_5px_rgba(168,139,96,0.8)]" />
       </div>
 
-      <div 
+      <div
         ref={cursorRef}
         className={getCursorStyles()}
-        style={{ 
-          marginLeft: mode === 'image' ? '-64px' : (mode === 'button' ? '-40px' : (mode === 'text' ? '-32px' : '-12px')), 
-          marginTop: mode === 'image' ? '-64px' : (mode === 'button' ? '-40px' : (mode === 'text' ? '-32px' : '-12px')) 
+        style={{
+          marginLeft: mode === 'image' ? '-64px' : (mode === 'button' ? '-40px' : (mode === 'text' ? '-32px' : '-12px')),
+          marginTop: mode === 'image' ? '-64px' : (mode === 'button' ? '-40px' : (mode === 'text' ? '-32px' : '-12px'))
         }}
       />
     </>
